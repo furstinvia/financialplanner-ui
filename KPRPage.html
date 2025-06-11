@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propera - KPR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #edeae3 0%, #f5f3ed 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 50px rgba(50, 30, 82, 0.3);
+            position: relative;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #edeae3;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #321e52;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #321e52 0%, #4a2d6b 100%);
+            color: #edeae3;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(153, 131, 178, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #edeae3;
+            font-size: 18px;
+            margin-right: 15px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .search-section {
+            padding: 20px;
+            background: #fff;
+            border-bottom: 1px solid rgba(153, 131, 178, 0.1);
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid rgba(153, 131, 178, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            background: #f8f7f4;
+            color: #321e52;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #9983b2;
+            background: #fff;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9983b2;
+            font-size: 18px;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-chip {
+            background: #edeae3;
+            color: #321e52;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            color: #edeae3;
+        }
+
+        .bank-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .bank-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(50, 30, 82, 0.08);
+            border: 1px solid rgba(153, 131, 178, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bank-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(50, 30, 82, 0.15);
+        }
+
+        .bank-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .bank-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+
+        .bank-info h3 {
+            color: #321e52;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .bank-info p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .rate-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px 0;
+            border-top: 1px solid rgba(153, 131, 178, 0.1);
+        }
+
+        .rate-item {
+            text-align: center;
+        }
+
+        .rate-value {
+            color: #321e52;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .rate-label {
+            color: #666;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .bank-features {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .feature-tag {
+            background: rgba(153, 131, 178, 0.1);
+            color: #321e52;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* KPR Detail Page */
+        .detail-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-bottom: 1px solid rgba(153, 131, 178, 0.1);
+        }
+
+        .bank-detail-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .program-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .program-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 6px 20px rgba(50, 30, 82, 0.08);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .program-card:hover {
+            border-color: #9983b2;
+            transform: translateY(-2px);
+        }
+
+        .program-card.selected {
+            border-color: #321e52;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .program-title {
+            color: #321e52;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .program-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .interest-rate {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .program-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(153, 131, 178, 0.05);
+            border-radius: 10px;
+        }
+
+        .detail-value {
+            color: #321e52;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .program-benefits {
+            margin-top: 15px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .benefit-icon {
+            color: #4CAF50;
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .apply-section {
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid rgba(153, 131, 178, 0.1);
+        }
+
+        .apply-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            color: #edeae3;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(50, 30, 82, 0.3);
+        }
+
+        .apply-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Form Page */
+        .form-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .form-section {
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(50, 30, 82, 0.08);
+        }
+
+        .section-title {
+            color: #321e52;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            color: #321e52;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(153, 131, 178, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            background: #fff;
+            color: #321e52;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #9983b2;
+            box-shadow: 0 0 0 3px rgba(153, 131, 178, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(153, 131, 178, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            background: #fff;
+            color: #321e52;
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-step {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(153, 131, 178, 0.3);
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            transform: scale(1.2);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid rgba(153, 131, 178, 0.1);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 16px;
+            background: #edeae3;
+            color: #321e52;
+            border: 2px solid #9983b2;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            flex: 2;
+            padding: 16px;
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            color: #edeae3;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-switcher {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .switch-btn {
+            padding: 8px 16px;
+            background: rgba(50, 30, 82, 0.8);
+            color: #edeae3;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .switch-btn.active {
+            background: linear-gradient(135deg, #9983b2, #321e52);
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .currency-input input {
+            padding-left: 50px;
+        }
+
+        .form-note {
+            background: rgba(153, 131, 178, 0.1);
+            border: 1px solid rgba(153, 131, 178, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #321e52;
+            font-size: 14px;
+        }
+
+        .form-note-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-note-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(180deg); }
+        }
+
+        @media (max-width: 400px) {
+            .phone-container {
+                width: 100%;
+                height: 100vh;
+                margin: 0;
+                border-radius: 0;
+                padding: 0;
+            }
+            
+            .screen {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone-container">
+        <div class="screen">
+            
+            <!-- KPR LIST PAGE -->
+            <div class="page active" id="kpr-list">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>●●●●●</span>
+                    <span>100% 🔋</span>
+                </div>
+
+                <div class="header">
+                    <button class="back-btn">←</button>
+                    <h1 class="header-title">Pengajuan KPR</h1>
+                </div>
+
+                <div class="search-section">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Cari bank atau program KPR..." oninput="filterBanks(this.value)">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="filter-section">
+                        <div class="filter-chip active" onclick="filterByCategory(this, 'all')">Semua Bank</div>
+                        <div class="filter-chip" onclick="filterByCategory(this, 'low-rate')">Rate Rendah</div>
+                        <div class="filter-chip" onclick="filterByCategory(this, 'syariah')">Syariah</div>
+                        <div class="filter-chip" onclick="filterByCategory(this, 'first-home')">First Home</div>
+                        <div class="filter-chip" onclick="filterByCategory(this, 'subsidi')">Subsidi</div>
+                    </div>
+                </div>
+
+                <div class="bank-list">
+                    <div class="bank-card" data-category="low-rate" onclick="showPage('kpr-detail')">
+                        <div class="bank-header">
+                            <div class="bank-logo">BCA</div>
+                            <div class="bank-info">
+                                <h3>Bank Central Asia</h3>
+                                <p>KPR BCA - Bunga Kompetitif</p>
+                                <p>⭐ 4.8 • 1,234 review</p>
+                            </div>
+                        </div>
+                        <div class="rate-info">
+                            <div class="rate-item">
+                                <div class="rate-value">3.88%</div>
+                                <div class="rate-label">Rate Mulai</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">25 Tahun</div>
+                                <div class="rate-label">Tenor Max</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">90%</div>
+                                <div class="rate-label">LTV Max</div>
+                            </div>
+                        </div>
+                        <div class="bank-features">
+                            <div class="feature-tag">Proses Cepat</div>
+                            <div class="feature-tag">Tanpa Biaya Admin</div>
+                            <div class="feature-tag">Rate Fixed 2 Tahun</div>
+                        </div>
+                    </div>
+
+                    <div class="bank-card" data-category="subsidi" onclick="showPage('kpr-detail')">
+                        <div class="bank-header">
+                            <div class="bank-logo">BRI</div>
+                            <div class="bank-info">
+                                <h3>Bank Rakyat Indonesia</h3>
+                                <p>KPR BRI - Kredit Pemilikan Rumah</p>
+                                <p>⭐ 4.7 • 2,156 review</p>
+                            </div>
+                        </div>
+                        <div class="rate-info">
+                            <div class="rate-item">
+                                <div class="rate-value">4.25%</div>
+                                <div class="rate-label">Rate Mulai</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">20 Tahun</div>
+                                <div class="rate-label">Tenor Max</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">85%</div>
+                                <div class="rate-label">LTV Max</div>
+                            </div>
+                        </div>
+                        <div class="bank-features">
+                            <div class="feature-tag">Subsidi FLPP</div>
+                            <div class="feature-tag">Program Khusus</div>
+                            <div class="feature-tag">Take Over</div>
+                        </div>
+                    </div>
+
+                    <div class="bank-card" data-category="syariah" onclick="showPage('kpr-detail')">
+                        <div class="bank-header">
+                            <div class="bank-logo">BSI</div>
+                            <div class="bank-info">
+                                <h3>Bank Syariah Indonesia</h3>
+                                <p>KPR Syariah - Pembiayaan Murabahah</p>
+                                <p>⭐ 4.6 • 987 review</p>
+                            </div>
+                        </div>
+                        <div class="rate-info">
+                            <div class="rate-item">
+                                <div class="rate-value">6.99%</div>
+                                <div class="rate-label">Margin Mulai</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">25 Tahun</div>
+                                <div class="rate-label">Tenor Max</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">95%</div>
+                                <div class="rate-label">Financing Max</div>
+                            </div>
+                        </div>
+                        <div class="bank-features">
+                            <div class="feature-tag">Syariah Compliant</div>
+                            <div class="feature-tag">BI Checking Fleksibel</div>
+                            <div class="feature-tag">Proses Online</div>
+                        </div>
+                    </div>
+
+                    <div class="bank-card" data-category="first-home" onclick="showPage('kpr-detail')">
+                        <div class="bank-header">
+                            <div class="bank-logo">MANDIRI</div>
+                            <div class="bank-info">
+                                <h3>Bank Mandiri</h3>
+                                <p>KPR Mandiri - First Home Program</p>
+                                <p>⭐ 4.5 • 1,876 review</p>
+                            </div>
+                        </div>
+                        <div class="rate-info">
+                            <div class="rate-item">
+                                <div class="rate-value">5.25%</div>
+                                <div class="rate-label">Rate Mulai</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">20 Tahun</div>
+                                <div class="rate-label">Tenor Max</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">95%</div>
+                                <div class="rate-label">LTV Max</div>
+                            </div>
+                        </div>
+                        <div class="bank-features">
+                            <div class="feature-tag">First Time Buyer</div>
+                            <div class="feature-tag">DP Minim</div>
+                            <div class="feature-tag">Bunga Subsidi</div>
+                        </div>
+                    </div>
+
+                    <div class="bank-card" data-category="low-rate" onclick="showPage('kpr-detail')">
+                        <div class="bank-header">
+                            <div class="bank-logo">CIMB</div>
+                            <div class="bank-info">
+                                <h3>CIMB Niaga</h3>
+                                <p>KPR CIMB - Xtra Benefit</p>
+                                <p>⭐ 4.4 • 654 review</p>
+                            </div>
+                        </div>
+                        <div class="rate-info">
+                            <div class="rate-item">
+                                <div class="rate-value">4.88%</div>
+                                <div class="rate-label">Rate Mulai</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">25 Tahun</div>
+                                <div class="rate-label">Tenor Max</div>
+                            </div>
+                            <div class="rate-item">
+                                <div class="rate-value">85%</div>
+                                <div class="rate-label">LTV Max</div>
+                            </div>
+                        </div>
+                        <div class="bank-features">
+                            <div class="feature-tag">Cashback</div>
+                            <div class="feature-tag">Free Appraisal</div>
+                            <div class="feature-tag">Online Process</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPR DETAIL PAGE -->
+            <div class="page" id="kpr-detail">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>●●●●●</span>
+                    <span>100% 🔋</span>
+                </div>
+
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('kpr-list')">←</button>
+                    <h1 class="header-title">Program KPR BCA</h1>
+                </div>
+
+                <div class="detail-header">
+                    <div class="bank-detail-info">
+                        <div class="bank-logo">BCA</div>
+                        <div class="bank-info">
+                            <h3>Bank Central Asia</h3>
+                            <p>Pilih program KPR yang sesuai kebutuhan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="program-list">
+                    <div class="program-card selected" onclick="selectProgram(this)">
+                        <div class="program-header">
+                            <div>
+                                <div class="program-title">KPR BCA Xtra</div>
+                                <div class="program-subtitle">Program unggulan dengan rate kompetitif</div>
+                            </div>
+                            <div class="interest-rate">3.88%</div>
+                        </div>
+                        <div class="program-details">
+                            <div class="detail-item">
+                                <div class="detail-value">25 Tahun</div>
+                                <div class="detail-label">Tenor Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">90%</div>
+                                <div class="detail-label">LTV Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">5 Miliar</div>
+                                <div class="detail-label">Plafon Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">Fixed 2 Th</div>
+                                <div class="detail-label">Jenis Bunga</div>
+                            </div>
+                        </div>
+                        <div class="program-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Proses persetujuan hingga 14 hari kerja
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Gratis biaya administrasi dan provisi
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Rate fixed 2 tahun pertama
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="program-card" onclick="selectProgram(this)">
+                    <div class="program-card" onclick="selectProgram(this)">
+                        <div class="program-header">
+                            <div>
+                                <div class="program-title">KPR BCA Platinum</div>
+                                <div class="program-subtitle">Untuk nasabah prioritas dengan benefit eksklusif</div>
+                            </div>
+                            <div class="interest-rate">4.25%</div>
+                        </div>
+                        <div class="program-details">
+                            <div class="detail-item">
+                                <div class="detail-value">30 Tahun</div>
+                                <div class="detail-label">Tenor Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">95%</div>
+                                <div class="detail-label">LTV Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">10 Miliar</div>
+                                <div class="detail-label">Plafon Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">Floating</div>
+                                <div class="detail-label">Jenis Bunga</div>
+                            </div>
+                        </div>
+                        <div class="program-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Personal Relationship Manager
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Akses ke Tahapan Gold/Platinum
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Gratis asuransi jiwa dan kebakaran
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="program-card" onclick="selectProgram(this)">
+                        <div class="program-header">
+                            <div>
+                                <div class="program-title">KPR BCA KaryaGriya</div>
+                                <div class="program-subtitle">Khusus untuk pembelian rumah siap pakai</div>
+                            </div>
+                            <div class="interest-rate">4.88%</div>
+                        </div>
+                        <div class="program-details">
+                            <div class="detail-item">
+                                <div class="detail-value">20 Tahun</div>
+                                <div class="detail-label">Tenor Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">85%</div>
+                                <div class="detail-label">LTV Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">2 Miliar</div>
+                                <div class="detail-label">Plafon Maksimal</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">Fixed 1 Th</div>
+                                <div class="detail-label">Jenis Bunga</div>
+                            </div>
+                        </div>
+                        <div class="program-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Proses cepat untuk rumah ready stock
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Dapat dikombinasi dengan KPR konstruksi
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                Syarat dokumen lebih sederhana
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="apply-section">
+                    <button class="apply-btn" onclick="showPage('kpr-form')">
+                        Ajukan Program Terpilih
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPR FORM PAGE -->
+            <div class="page" id="kpr-form">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>●●●●●</span>
+                    <span>100% 🔋</span>
+                </div>
+
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('kpr-detail')">←</button>
+                    <h1 class="header-title">Pengajuan KPR</h1>
+                </div>
+
+                <div class="progress-indicator">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                </div>
+
+                <div class="form-container">
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">👤</span>
+                            Data Diri Pemohon
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-input" placeholder="Masukkan nama lengkap sesuai KTP">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">NIK</label>
+                                <input type="text" class="form-input" placeholder="16 digit NIK">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">No. KK</label>
+                                <input type="text" class="form-input" placeholder="16 digit No. KK">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Tempat Lahir</label>
+                                <input type="text" class="form-input" placeholder="Kota kelahiran">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tanggal Lahir</label>
+                                <input type="date" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Jenis Kelamin</label>
+                                <select class="form-select">
+                                    <option value="">Pilih jenis kelamin</option>
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Status Pernikahan</label>
+                                <select class="form-select">
+                                    <option value="">Pilih status</option>
+                                    <option value="single">Belum Menikah</option>
+                                    <option value="married">Menikah</option>
+                                    <option value="divorced">Cerai</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Alamat Sesuai KTP</label>
+                            <input type="text" class="form-input" placeholder="Alamat lengkap sesuai KTP">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Kota/Kabupaten</label>
+                                <select class="form-select">
+                                    <option value="">Pilih kota</option>
+                                    <option value="jakarta">Jakarta</option>
+                                    <option value="surabaya">Surabaya</option>
+                                    <option value="bandung">Bandung</option>
+                                    <option value="medan">Medan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Kode Pos</label>
+                                <input type="text" class="form-input" placeholder="12345">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">No. Handphone</label>
+                                <input type="tel" class="form-input" placeholder="08xxxxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" placeholder="email@example.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">💼</span>
+                            Data Pekerjaan
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Jenis Pekerjaan</label>
+                            <select class="form-select">
+                                <option value="">Pilih jenis pekerjaan</option>
+                                <option value="karyawan">Karyawan Swasta</option>
+                                <option value="pns">PNS/TNI/Polri</option>
+                                <option value="wiraswasta">Wiraswasta</option>
+                                <option value="profesional">Profesional</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Nama Perusahaan</label>
+                            <input type="text" class="form-input" placeholder="Nama perusahaan/instansi">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Alamat Kantor</label>
+                            <input type="text" class="form-input" placeholder="Alamat lengkap kantor">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Jabatan</label>
+                                <input type="text" class="form-input" placeholder="Jabatan/posisi">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Lama Bekerja</label>
+                                <select class="form-select">
+                                    <option value="">Pilih lama bekerja</option>
+                                    <option value="<1">< 1 tahun</option>
+                                    <option value="1-2">1-2 tahun</option>
+                                    <option value="2-5">2-5 tahun</option>
+                                    <option value=">5">> 5 tahun</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Penghasilan per Bulan</label>
+                                <div class="currency-input">
+                                    <span class="currency-prefix">Rp</span>
+                                    <input type="text" class="form-input" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Penghasilan Lainnya</label>
+                                <div class="currency-input">
+                                    <span class="currency-prefix">Rp</span>
+                                    <input type="text" class="form-input" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🏠</span>
+                            Data Properti
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Jenis Properti</label>
+                            <select class="form-select">
+                                <option value="">Pilih jenis properti</option>
+                                <option value="rumah">Rumah Tinggal</option>
+                                <option value="apartemen">Apartemen</option>
+                                <option value="ruko">Ruko/Rukan</option>
+                                <option value="tanah">Tanah Kavling</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Alamat Properti</label>
+                            <input type="text" class="form-input" placeholder="Alamat lengkap properti">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Harga Properti</label>
+                                <div class="currency-input">
+                                    <span class="currency-prefix">Rp</span>
+                                    <input type="text" class="form-input" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Uang Muka</label>
+                                <div class="currency-input">
+                                    <span class="currency-prefix">Rp</span>
+                                    <input type="text" class="form-input" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Jumlah Pinjaman</label>
+                                <div class="currency-input">
+                                    <span class="currency-prefix">Rp</span>
+                                    <input type="text" class="form-input" placeholder="0" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Jangka Waktu</label>
+                                <select class="form-select">
+                                    <option value="">Pilih tenor</option>
+                                    <option value="5">5 tahun</option>
+                                    <option value="10">10 tahun</option>
+                                    <option value="15">15 tahun</option>
+                                    <option value="20">20 tahun</option>
+                                    <option value="25">25 tahun</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-note">
+                            <div class="form-note-title">
+                                <span class="form-note-icon">💡</span>
+                                Catatan Penting
+                            </div>
+                            <ul style="margin-left: 20px; color: #666;">
+                                <li>Pastikan semua data yang diinput benar dan sesuai dokumen</li>
+                                <li>Jumlah pinjaman akan dihitung otomatis: Harga Properti - Uang Muka</li>
+                                <li>Simulasi angsuran akan ditampilkan setelah mengisi semua data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="showPage('kpr-detail')">
+                        Kembali
+                    </button>
+                    <button class="btn-primary" onclick="nextStep()">
+                        Lanjut
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update page switcher buttons
+            document.querySelectorAll('.switch-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Set active button based on page
+            let buttonIndex = 0;
+            if (pageId === 'kpr-detail') buttonIndex = 1;
+            if (pageId === 'kpr-form') buttonIndex = 2;
+            
+            document.querySelectorAll('.switch-btn')[buttonIndex].classList.add('active');
+        }
+
+        function filterBanks(searchTerm) {
+            const banks = document.querySelectorAll('.bank-card');
+            const term = searchTerm.toLowerCase();
+            
+            banks.forEach(bank => {
+                const bankName = bank.querySelector('h3').textContent.toLowerCase();
+                const bankDesc = bank.querySelector('p').textContent.toLowerCase();
+                
+                if (bankName.includes(term) || bankDesc.includes(term)) {
+                    bank.style.display = 'block';
+                } else {
+                    bank.style.display = 'none';
+                }
+            });
+        }
+
+        function filterByCategory(element, category) {
+            // Update active filter
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Show/hide banks based on category
+            const banks = document.querySelectorAll('.bank-card');
+            
+            banks.forEach(bank => {
+                if (category === 'all' || bank.getAttribute('data-category') === category) {
+                    bank.style.display = 'block';
+                } else {
+                    bank.style.display = 'none';
+                }
+            });
+        }
+
+        function selectProgram(element) {
+            // Remove selected class from all programs
+            document.querySelectorAll('.program-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked program
+            element.classList.add('selected');
+        }
+
+        function nextStep() {
+            // Validate required fields
+            const requiredInputs = document.querySelectorAll('#kpr-form input[required], #kpr-form select[required]');
+            let isValid = true;
+            
+            requiredInputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    input.style.borderColor = '#ff4444';
+                } else {
+                    input.style.borderColor = '';
+                }
+            });
+            
+            if (isValid) {
+                // Update progress
+                const currentStep = document.querySelector('.progress-step.active');
+                const nextStep = currentStep.nextElementSibling;
+                
+                if (nextStep) {
+                    nextStep.classList.add('active');
+                }
+                
+                alert('Data berhasil disimpan! Melanjutkan ke tahap berikutnya...');
+            } else {
+                alert('Harap lengkapi semua field yang wajib diisi!');
+            }
+        }
+
+        // Auto calculate loan amount
+        function calculateLoan() {
+            const propertyPrice = parseFloat(document.querySelector('input[placeholder="0"]').value.replace(/\D/g, '')) || 0;
+            const downPayment = parseFloat(document.querySelectorAll('input[placeholder="0"]')[1].value.replace(/\D/g, '')) || 0;
+            const loanAmount = propertyPrice - downPayment;
+            
+            if (loanAmount > 0) {
+                document.querySelector('input[readonly]').value = loanAmount.toLocaleString('id-ID');
+            }
+        }
+
+        // Format currency input
+        function formatCurrency(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value) {
+                value = parseInt(value).toLocaleString('id-ID');
+                input.value = value;
+            }
+            calculateLoan();
+        }
+
+        // Add event listeners for currency formatting
+        document.addEventListener('DOMContentLoaded', function() {
+            const currencyInputs = document.querySelectorAll('.currency-input input');
+            currencyInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    formatCurrency(this);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

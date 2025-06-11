@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propera - Platform Perencana Keuangan Properti</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #edeae3 0%, #f5f3ed 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 50px rgba(50, 30, 82, 0.3);
+            position: relative;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #edeae3;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #321e52;
+        }
+
+        .header {
+            padding: 10px 20px 20px;
+            background: linear-gradient(135deg, #321e52 0%, #4a2d6b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(153, 131, 178, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .welcome-text {
+            color: #edeae3;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .welcome-text p {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .main-content {
+            padding: 25px 20px;
+            flex: 1;
+        }
+
+        .kpr-status-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(50, 30, 82, 0.1);
+            border: 1px solid rgba(153, 131, 178, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpr-status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9983b2, #321e52);
+        }
+
+        .kpr-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .kpr-status-header h3 {
+            color: #321e52;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            background: linear-gradient(135deg, #9983b2, #b8a8d1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        .progress-container {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #edeae3;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9983b2, #321e52);
+            width: 60%;
+            border-radius: 4px;
+            animation: progressGrow 2s ease-out;
+        }
+
+        .progress-text {
+            color: #321e52;
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(50, 30, 82, 0.08);
+            border: 1px solid rgba(153, 131, 178, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(50, 30, 82, 0.15);
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(153, 131, 178, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .menu-item:hover::before {
+            left: 100%;
+        }
+
+        .menu-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .menu-item h4 {
+            color: #321e52;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .menu-item p {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+
+        .kpr-menu {
+            grid-column: 1 / -1;
+        }
+
+        .kpr-menu .menu-icon {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(153, 131, 178, 0.1);
+            padding: 15px 20px 25px;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #9983b2;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #321e52;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes progressGrow {
+            0% { width: 0%; }
+            100% { width: 60%; }
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #321e52 0%, #4a2d6b 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            color: #edeae3;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            background: rgba(153, 131, 178, 0.2);
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite reverse;
+        }
+
+        .feature-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>●●●●●</span>
+                <span>100% 🔋</span>
+            </div>
+
+            <!-- Header -->
+            <div class="header">
+                <div class="welcome-text">
+                    <h1>Propera</h1>
+                    <p>Platform Perencana Keuangan Properti</p>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- KPR Status Card -->
+                <div class="kpr-status-card">
+                    <div class="kpr-status-header">
+                        <h3>Status Pengajuan KPR</h3>
+                        <div class="status-badge">Sedang Diajukan</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="progress-text">Tahap 2 dari 4 - Verifikasi Dokumen</div>
+                    </div>
+                </div>
+
+                <!-- Menu Grid -->
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="menu-icon">🏠</div>
+                        <h4>Cari Properti</h4>
+                        <p>Temukan properti impian dengan filter lokasi dan budget</p>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-icon">💬</div>
+                        <h4>Konsultasi</h4>
+                        <p>Konsultasi dengan ahli keuangan properti terpercaya</p>
+                    </div>
+                    
+                    <div class="menu-item kpr-menu">
+                        <div class="menu-icon">🏦</div>
+                        <h4>Pengajuan KPR</h4>
+                        <p>Ajukan KPR dengan mudah dan dapatkan persetujuan cepat</p>
+                    </div>
+                </div>
+
+                <!-- Feature Card -->
+                <div class="feature-card">
+                    <h4>Perencanaan Keuangan Masa Depan</h4>
+                    <p>Kami membantu Anda merencanakan investasi properti dengan analisis mendalam dan strategi yang tepat untuk masa depan yang lebih cerah.</p>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-items">
+                    <div class="nav-item active">
+                        <i>🏠</i>
+                        <span>Home</span>
+                    </div>
+                    <div class="nav-item">
+                        <i>🔍</i>
+                        <span>Search</span>
+                    </div>
+                    <div class="nav-item">
+                        <i>💰</i>
+                        <span>Finance</span>
+                    </div>
+                    <div class="nav-item">
+                        <i>👤</i>
+                        <span>Profile</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

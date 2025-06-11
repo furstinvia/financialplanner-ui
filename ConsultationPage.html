@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propera - Konsultasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #edeae3 0%, #f5f3ed 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 50px rgba(50, 30, 82, 0.3);
+            position: relative;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #edeae3;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #321e52;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #321e52 0%, #4a2d6b 100%);
+            color: #edeae3;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(153, 131, 178, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #edeae3;
+            font-size: 18px;
+            margin-right: 15px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .search-section {
+            padding: 20px;
+            background: #fff;
+            border-bottom: 1px solid rgba(153, 131, 178, 0.1);
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid rgba(153, 131, 178, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            background: #f8f7f4;
+            color: #321e52;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #9983b2;
+            background: #fff;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9983b2;
+            font-size: 18px;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-chip {
+            background: #edeae3;
+            color: #321e52;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            color: #edeae3;
+        }
+
+        .consultant-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .consultant-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f7f4 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(50, 30, 82, 0.08);
+            border: 1px solid rgba(153, 131, 178, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .consultant-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(50, 30, 82, 0.15);
+        }
+
+        .consultant-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .consultant-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin-right: 15px;
+            position: relative;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: #4CAF50;
+            border-radius: 50%;
+            border: 3px solid #fff;
+        }
+
+        .consultant-info h3 {
+            color: #321e52;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .consultant-info p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .stars {
+            color: #FFC107;
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .consultant-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: rgba(153, 131, 178, 0.1);
+            color: #321e52;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .consultant-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-btn {
+            background: linear-gradient(135deg, #9983b2, #321e52);
+            color: #edeae3;
+        }
+
+        .call-btn {
+            background: #edeae3;
+            color: #321e52;
+            border: 2px solid #9983b2;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(50, 30, 82, 0.2);
+        }
+
+        .bottom-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(153, 131, 178, 0.1);
+            padding: 15px 20px 25px;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #9983b2;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #321e52;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>●●●●●</span>
+                <span>100% 🔋</span>
+            </div>
+
+            <div class="header">
+                <button class="back-btn">←</button>
+                <h1 class="header-title">Konsultasi</h1>
+            </div>
+
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Cari konsultan atau keahlian...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="filter-section">
+                    <div class="filter-chip active">Semua</div>
+                    <div class="filter-chip">KPR</div>
+                    <div class="filter-chip">Investasi</div>
+                    <div class="filter-chip">Perencanaan</div>
+                    <div class="filter-chip">Asuransi</div>
+                </div>
+            </div>
+
+            <div class="consultant-list">
+                <div class="consultant-card">
+                    <div class="consultant-header">
+                        <div class="consultant-avatar">
+                            AH
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="consultant-info">
+                            <h3>Ahmad Hakim</h3>
+                            <p>Senior Financial Advisor</p>
+                            <p>📍 Jakarta • 5 tahun pengalaman</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <div class="stars">★★★★★</div>
+                        <span class="rating-text">4.9 (127 review)</span>
+                    </div>
+                    <div class="consultant-tags">
+                        <div class="tag">KPR Specialist</div>
+                        <div class="tag">First Time Buyer</div>
+                        <div class="tag">Investment</div>
+                    </div>
+                    <div class="consultant-actions">
+                        <button class="action-btn chat-btn" onclick="goToChat()">💬 Chat</button>
+                        <button class="action-btn call-btn">📞 Video Call</button>
+                    </div>
+                </div>
+
+                <div class="consultant-card">
+                    <div class="consultant-header">
+                        <div class="consultant-avatar">
+                            SP
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="consultant-info">
+                            <h3>Sari Purnama</h3>
+                            <p>Property Investment Expert</p>
+                            <p>📍 Surabaya • 8 tahun pengalaman</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <div class="stars">★★★★★</div>
+                        <span class="rating-text">4.8 (89 review)</span>
+                    </div>
+                    <div class="consultant-tags">
+                        <div class="tag">Property Investment</div>
+                        <div class="tag">Portfolio Planning</div>
+                    </div>
+                    <div class="consultant-actions">
+                        <button class="action-btn chat-btn" onclick="goToChat()">💬 Chat</button>
+                        <button class="action-btn call-btn">📞 Video Call</button>
+                    </div>
+                </div>
+
+                <div class="consultant-card">
+                    <div class="consultant-header">
+                        <div class="consultant-avatar">
+                            RD
+                        </div>
+                        <div class="consultant-info">
+                            <h3>Rizki Darmawan</h3>
+                            <p>Mortgage Specialist</p>
+                            <p>📍 Bandung • 6 tahun pengalaman</p>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <div class="stars">★★★★☆</div>
+                        <span class="rating-text">4.7 (156 review)</span>
+                    </div>
+                    <div class="consultant-tags">
+                        <div class="tag">KPR Processing</div>
+                        <div class="tag">Credit Analysis</div>
+                        <div class="tag">Refinancing</div>
+                    </div>
+                    <div class="consultant-actions">
+                        <button class="action-btn chat-btn" onclick="goToChat()">💬 Chat</button>
+                        <button class="action-btn call-btn">📞 Video Call</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-items">
+                    <div class="nav-item">
+                        <i>🏠</i>
+                        <span>Home</span>
+                    </div>
+                    <div class="nav-item">
+                        <i>🔍</i>
+                        <span>Search</span>
+                    </div>
+                    <div class="nav-item active">
+                        <i>💬</i>
+                        <span>Konsultasi</span>
+                    </div>
+                    <div class="nav-item">
+                        <i>👤</i>
+                        <span>Profile</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add click handlers for filter chips
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Function to navigate to chat page
+        function goToChat() {
+            // In a real app, this would navigate to the chat page
+            // For demo purposes, you could open the chat.html file
+            alert('Navigating to chat page...');
+            // window.location.href = 'chat.html';
+        }
+    </script>
+</body>
+</html>
